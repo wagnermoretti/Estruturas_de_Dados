@@ -27,8 +27,7 @@ class lista {
         lista();
         lista(const lista& umaLista);
         lista& operator=(const lista& umaLista);
-        lista&
-         operator+(const lista& umaLista);
+        lista operator+(const lista& umaLista) const;
         ~lista();
         void insere(Texto palavra);
         void imprime() const;
@@ -103,15 +102,21 @@ lista& lista::operator=(const lista& umaLista) {
 }
 
 // concatenacao de listas
-lista& lista::operator+(const lista& umaLista) {
+lista lista::operator+(const lista& umaLista) const {
     // IMPLEMENTAR
     // IMPLEMENTAR
-    noh* aux = umaLista.primeiro;
+    lista listaC;
+    noh* aux = primeiro;
+    noh* aux2 = umaLista.primeiro;
     while (aux != NULL) {
-		insereNoFim(aux->palavra);
+		listaC.insereNoFim(aux->palavra);
 		aux = aux->proximo;
 	}
-	return *this;
+    while (aux2 != NULL) {
+		listaC.insereNoFim(aux2->palavra);
+		aux2 = aux2->proximo;
+	}
+	return listaC;
 }
 
 void lista::insereNoFim(Texto palavra) {
