@@ -2,101 +2,97 @@
 
 using namespace std;
 
-typedef string Texto;
-
-class noh {
-    friend class Aluno;
-		private:
-			const Texto nome;
-			noh* mProximo;
-			noh* mAnterior;
-		public:
-			noh();
-};
-
-noh::noh() {
-    mProximo = NULL;
-    mAnterior = NULL;
-}
-
 class Aluno {
-    private:
-        noh* mPrimeiro;
-        noh* mUltimo;
-        char* mNome;
-        unsigned mMatricula;
-        int mTamanho;
-    public:
-        Aluno();
-        ~Aluno();
-        void InsereNoInicio(unsigned matricula, Texto nome);
-        inline bool vazia();
+	friend class Lista;
+	public:
+		Aluno(unsigned matricula, string nome) {
+			mMatricula = matricula;
+			mNome = nome;
+			mProximo = NULL;
+			mAnterior = NULL;
+		}
+	private:
+		unsigned mMatricula;
+		string mNome;
+		Aluno* mProximo;
+		Aluno* mAnterior;
 };
-	
-Aluno::Aluno() {
-    mTamanho = 0;
-    mPrimeiro = NULL;
-    mUltimo = NULL;
+
+class Lista {
+	public:
+		Lista();
+		~Lista();
+		inline bool Vazia();
+		void InsereNoInicio(unsigned matricula, string nome);
+		void Remove();
+	private:
+		Aluno* mPrimeiro;
+		Aluno* mUltimo;
+		unsigned mTamanho;
+		void RemoveTodos();
+};
+
+Lista::Lista() {
+	mPrimeiro = NULL;
+	mUltimo = NULL;
+	mTamanho = 0;
 }
 
-Aluno::~Aluno() {
-    noh* temporario = mPrimeiro;
-    while (temporario != NULL) {
-        delete temporario;
-        temporario = temporario->mProximo;
-    }
+Lista::~Lista() {
+	RemoveTodos();
 }
 
-inline bool Aluno::vazia() {
+void Lista::RemoveTodos() {
+	Aluno* aux = mPrimeiro;
+	while (aux != NULL) {
+		Aluno* temporario = aux;
+		delete temporario;
+		temporario = aux->mProximo;
+		aux = aux->mProximo;
+	}
+	delete aux;
+	mPrimeiro = NULL;
+	mUltimo = NULL;
+}
+
+inline bool Lista::Vazia() {
 	return (mPrimeiro == NULL);
-} 
+}
 
-void Aluno::InsereNoInicio(unsigned matricula, Texto nome) {
+void Lista::InsereNoInicio(unsigned matricula, string nome) {
+	Aluno* novo = new Aluno(matricula, nome);
 	if (vazia()) {
-		noh* novo = new noh(matricula, nome);
 		mPrimeiro = novo;
 		mUltimo = novo;
 	} else {
-		noh* novo = new noh(matricula, nome);
 		novo->mProximo = mPrimeiro;
+		mPrimeiro->mAnterior = novo;
 		mPrimeiro = novo;
 	}
-	tamanho++;
+	mTamanho++;
 }
 
-void Aluno::imprime() {
-	noh* aux = mPrimeiro;
-	while (aux != NULL) {
-		cout << aux->mMatricula << " " << aux->mNome << " ";
+void Lista::Remove(unsigned matricula) {
+	Aluno* aux = mPrimeiro;
+	bool achou = false;
+	unsigned contador = 1;
+	while (aux != NULL || achou == true) {
+		if (mTamanho == 1) {
+			// remove o mPrimeiro
+			delete temporario;
+		}
+		if (contador == mTamanho) {
+			// remove o mUltimo
+			Aluno* temporario = aux;
+			ultimo = aux->mAnterior;
+			delete temporario;
+			ultimo->mProximo = NULL;
+		} 
+		if  (aux->mMatricula == matricula) {
+			// Faltou aqui
+		} 
 		aux = aux->mProximo;
+		contador++;
+		mTamanho--;
 	}
-}
-
-int main() {
-    Aluno cadastroAluno;
-    string opcao;
-    Texto nome;
-    unsigned matricula;
-    cin >> opcao;
-    while (opcao != "t") {
-        switch(opcao) {
-            case "i":
-                cin >> matricula >> nome;
-                cadastroAluno.InsereNoInicio(matricula, nome);
-                break;
-            case "r":
-                cin >> matricula;
-                cadastroAluno.remove(matricula);
-                break;
-            case "ed":
-                cout << cadastroAluno.imprime() << endl;
-                break;
-            case "er":
-                cout << cadastroAluno.imprimeReverso() << endl;
-                break;
-        }
-        cin >> opcao;
-    }
-    cadastroAluno.imprime();
-    return 0;
 }
