@@ -24,7 +24,10 @@ class Lista {
 		~Lista();
 		inline bool Vazia();
 		void InsereNoInicio(unsigned matricula, string nome);
-		void Remove();
+		void Remove(unsigned matricula);
+		void Imprime();
+		void ImprimeReverso();
+		bool ExisteMatricula(unsigned matricula);
 	private:
 		Aluno* mPrimeiro;
 		Aluno* mUltimo;
@@ -61,7 +64,7 @@ inline bool Lista::Vazia() {
 
 void Lista::InsereNoInicio(unsigned matricula, string nome) {
 	Aluno* novo = new Aluno(matricula, nome);
-	if (vazia()) {
+	if (Vazia()) {
 		mPrimeiro = novo;
 		mUltimo = novo;
 	} else {
@@ -73,26 +76,79 @@ void Lista::InsereNoInicio(unsigned matricula, string nome) {
 }
 
 void Lista::Remove(unsigned matricula) {
-	Aluno* aux = mPrimeiro;
-	bool achou = false;
-	unsigned contador = 1;
-	while (aux != NULL || achou == true) {
-		if (mTamanho == 1) {
-			// remove o mPrimeiro
-			delete temporario;
+	if (ExisteMatricula(matricula)) {
+		Aluno* temporario = mPrimeiro;
+		while (temporario->mMatricula != matricula) {
+			temporario = temporario->mProximo;
 		}
-		if (contador == mTamanho) {
-			// remove o mUltimo
-			Aluno* temporario = aux;
-			ultimo = aux->mAnterior;
-			delete temporario;
-			ultimo->mProximo = NULL;
-		} 
-		if  (aux->mMatricula == matricula) {
-			// Faltou aqui
-		} 
-		aux = aux->mProximo;
-		contador++;
+		if (temporario == mPrimeiro && temporario == mUltimo) {
+			mPrimeiro = NULL;
+			mUltimo = NULL;
+		} else if (temporario == mPrimeiro) {
+			mPrimeiro = temporario->mProximo;
+			mPrimeiro->mAnterior = NULL;
+		} else if (temporario == mUltimo) {
+			mUltimo = temporario->mAnterior;
+			mUltimo->mProximo = NULL;
+		} else {
+			temporario->mAnterior->mProximo = temporario->mProximo;
+			temporario->mProximo->mAnterior = temporario->mAnterior;
+		}
+		
+		delete temporario;
 		mTamanho--;
+	} else {
+		cout << "ERRO" << endl;
 	}
+}
+
+void Lista::Imprime() {
+	Aluno* aux = mPrimeiro;
+	while (aux != NULL) {
+		cout << aux->mMatricula << " " << aux->mNome << " ";
+		aux = aux->mProximo;
+	}
+}
+
+void Lista::ImprimeReverso() {
+	Aluno* aux = mUltimo;
+	while (aux != NULL) {
+		cout << aux->mMatricula << " " << aux->mNome << " ";
+		aux = aux->mAnterior;
+	}
+}
+
+bool Lista::ExisteMatricula(unsigned matricula) {
+	Aluno* aux = mPrimeiro;
+	while (aux != NULL) {
+		if (aux->mMatricula == matricula) {
+			return true;
+		}
+		aux = aux->mProximo;
+	}
+	return false;
+}
+
+int main() {
+	Lista minhaLista;
+	string opcao;
+	unsigned matricula;
+	string nome;
+	 do {
+        cin >> opcao;
+        if (opcao == "i") {
+            cin >> matricula >> nome;
+            minhaLista.InsereNoInicio(matricula, nome);
+		} else if (opcao == "r") {
+			cin >> matricula;
+			minhaLista.Remove(matricula);
+		} else if (opcao == "ed") {
+			minhaLista.Imprime();
+            cout << endl;
+        } else if (opcao == "er") {
+            minhaLista.ImprimeReverso();
+            cout << endl;
+        }
+    } while (opcao != "t");
+    return 0;
 }
